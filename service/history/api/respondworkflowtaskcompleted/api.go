@@ -222,12 +222,14 @@ func (handler *WorkflowTaskCompletedHandler) Invoke(
 	behavior := request.GetVersioningBehavior()
 	wftDeploymentVersion := worker_versioning.DeploymentVersionFromOptions(request.GetDeploymentOptions())
 	deployment := worker_versioning.DeploymentFromDeploymentVersion(wftDeploymentVersion)
+	workerVersioningMode := request.GetDeploymentOptions().GetWorkerVersioningMode()
 	//nolint:staticcheck // SA1019 deprecated Deployment will clean up later
 	if behavior != enumspb.VERSIONING_BEHAVIOR_UNSPECIFIED && request.GetDeployment() == nil &&
-		(request.GetDeploymentOptions() == nil || request.GetDeploymentOptions().GetWorkerVersioningMode() != enumspb.WORKER_VERSIONING_MODE_VERSIONED) {
+		workerVersioningMode != enumspb.WORKER_VERSIONING_MODE_VERSIONED &&
+		workerVersioningMode != enumspb.WORKER_VERSIONING_MODE_UNVERSIONED {
 		// Mutable state wasn't changed yet and doesn't have to be cleared.
 		releaseLeaseWithError = false
-		return nil, serviceerror.NewInvalidArgument("versioning behavior cannot be specified without deployment options being set with versioned mode")
+		return nil, serviceerror.NewInvalidArgument("versioning behavior cannot be specified without deployment options containing an explicit worker versioning mode")
 	}
 
 	assignedBuildId := ms.GetAssignedBuildId()

@@ -817,8 +817,7 @@ func (m *workflowTaskStateMachine) AddWorkflowTaskCompletedEvent(
 
 	vb := request.VersioningBehavior
 	if request.DeploymentOptions != nil && request.DeploymentOptions.GetWorkerVersioningMode() != enumspb.WORKER_VERSIONING_MODE_VERSIONED {
-		// SDK has a bug that reports behavior if user has specified a default behavior without enabling versioning.
-		// Until that is fixed, we should adjust this value so the workflow works correctly.
+		// Versioning behavior does not apply when deployment options do not opt into versioning.
 		vb = enumspb.VERSIONING_BEHAVIOR_UNSPECIFIED
 	}
 
