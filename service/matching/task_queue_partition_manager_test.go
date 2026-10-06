@@ -906,6 +906,18 @@ func (g *backlogWriteGate) arm() { g.armed.Store(true) }
 
 func (g *backlogWriteGate) open() { g.opened.Do(func() { close(g.release) }) }
 
+func (g *backlogWriteGate) waitUntilPaused(t *testing.T) {
+	t.Helper()
+	await.RequireTrue(t, func() bool {
+		select {
+		case <-g.paused:
+			return true
+		default:
+			return false
+		}
+	}, 2*time.Second, time.Millisecond)
+}
+
 func (g *backlogWriteGate) wrap(h metrics.Handler) metrics.Handler {
 	return gatedMetricsHandler{Handler: h, gate: g}
 }
@@ -1029,7 +1041,9 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_NoVersioning() {
 	s.Require().Eventually(func() bool {
 		ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 		defer cancel()
-		pm.fetchAndEmitLogicalBacklogMetrics(ctx)
+		if _, err := pm.fetchAndEmitLogicalBacklogMetrics(ctx); err != nil {
+			return false
+		}
 
 		snap := capture.Snapshot()
 		count, ok := latestLogicalBacklogCount(snap, "__unversioned__", defaultPriorityTag)
@@ -1054,7 +1068,7 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_InFlightWriteDoesN
 
 	// Pause the emitter's write of the backlog, stop the partition, then let the write through.
 	gate.arm()
-	<-gate.paused
+	gate.waitUntilPaused(s.T())
 	pm.Stop(unloadCauseUnspecified)
 	gate.open()
 	<-gate.written
@@ -1146,15 +1160,18 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_SeriesZeroedOnVers
 	}
 	const (
 		deploymentName = "foo"
-		buildID        = "C" // not current, so nothing routes to or reloads its queue once unloaded
+		buildID        = "C" // not current, so the unversioned backlog is attributed elsewhere
 	)
 	s.addRoutingConfigUserData(deploymentName, "A", "", 0)
 
+	gate := newBacklogWriteGate()
 	pm, capture, cleanup := s.setupPartitionManagerWithCapture(testPartitionManagerConfig{
 		loadTime:                   1 * time.Minute,
 		backlogMetricsEmitInterval: 10 * time.Millisecond,
+		wrapMetricsHandler:         gate.wrap,
 	})
 	defer cleanup()
+	defer gate.open()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -1193,8 +1210,12 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_SeriesZeroedOnVers
 		return false
 	}, 10*time.Second, 10*time.Millisecond)
 
-	// Unload just the versioned queue; the partition and its emitter keep running.
+	// Pause after describe completes so it cannot reload C between taking its version snapshot
+	// and looking up the physical queue. The paused write must be cleared by the next emit.
+	gate.arm()
+	gate.waitUntilPaused(s.T())
 	pm.unloadPhysicalQueue(versionedQ, unloadCauseIdle)
+	gate.open()
 
 	await.RequireTrue(s.T(), func() bool {
 		snap := capture.Snapshot()
@@ -1303,7 +1324,9 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_CurrentOnly() {
 
 	// Wait for backlog stats to stabilize, then emit logical metrics.
 	s.Require().Eventually(func() bool {
-		pm.fetchAndEmitLogicalBacklogMetrics(ctx)
+		if _, err := pm.fetchAndEmitLogicalBacklogMetrics(ctx); err != nil {
+			return false
+		}
 		snap := capture.Snapshot()
 
 		unvCount, unvOk := latestLogicalBacklogCount(snap, "__unversioned__", defaultPriorityTag)
@@ -1356,7 +1379,9 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_CurrentAndRamping(
 	s.Require().Eventually(func() bool {
 		iterCtx, iterCancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 		defer iterCancel()
-		pm.fetchAndEmitLogicalBacklogMetrics(iterCtx)
+		if _, err := pm.fetchAndEmitLogicalBacklogMetrics(iterCtx); err != nil {
+			return false
+		}
 		snap := capture.Snapshot()
 
 		unvCount, unvOk := latestLogicalBacklogCount(snap, "__unversioned__", defaultPriorityTag)
@@ -1416,7 +1441,9 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_SmallBacklog() {
 	s.Require().Eventually(func() bool {
 		iterCtx, iterCancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 		defer iterCancel()
-		pm.fetchAndEmitLogicalBacklogMetrics(iterCtx)
+		if _, err := pm.fetchAndEmitLogicalBacklogMetrics(iterCtx); err != nil {
+			return false
+		}
 		snap := capture.Snapshot()
 
 		unvCount, unvOk := latestLogicalBacklogCount(snap, "__unversioned__", defaultPriorityTag)
@@ -1460,7 +1487,9 @@ func (s *PartitionManagerTestSuite) TestLogicalBacklogMetrics_BreakdownByBuildID
 
 	// Wait for backlog stats to stabilize, then emit.
 	s.Require().Eventually(func() bool {
-		pm.fetchAndEmitLogicalBacklogMetrics(ctx)
+		if _, err := pm.fetchAndEmitLogicalBacklogMetrics(ctx); err != nil {
+			return false
+		}
 		snap := capture.Snapshot()
 
 		// Unversioned should still be emitted (with attributed count = 0 since current takes all).

@@ -1833,10 +1833,12 @@ func staleLogicalBacklog(prev, cur map[string]*taskqueuespb.TaskQueueVersionInfo
 
 func (pm *taskQueuePartitionManagerImpl) logicalBacklogHandler(versionKey string) metrics.Handler {
 	deploymentName, buildID := parseDeploymentFromVersionKey(versionKey)
+	// Versioned emissions are gated by BreakdownMetricsByBuildID. Keep their labels stable
+	// so cleanup still reaches the original series if the setting changes later.
 	return pm.metricsHandler.WithTags(
-		metrics.WorkerVersionTag(versionKey, pm.config.BreakdownMetricsByBuildID()),
-		metrics.WorkerDeploymentNameTag(deploymentName, pm.config.BreakdownMetricsByBuildID()),
-		metrics.WorkerDeploymentBuildIDTag(buildID, pm.config.BreakdownMetricsByBuildID()),
+		metrics.WorkerVersionTag(versionKey, true),
+		metrics.WorkerDeploymentNameTag(deploymentName, true),
+		metrics.WorkerDeploymentBuildIDTag(buildID, true),
 	)
 }
 
