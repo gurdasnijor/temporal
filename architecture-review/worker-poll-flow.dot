@@ -1,0 +1,21 @@
+digraph G {
+graph [rankdir=LR, bgcolor="white", pad=0.3, splines=polyline];
+node [shape=box, style="rounded,filled", fontname="Helvetica", color="#54677a", fillcolor="#e8f1fa"];
+edge [fontname="Helvetica", fontsize=10, color="#516a82"];
+worker [label="SDK worker\nPollWorkflowTaskQueue", fillcolor="#f6e0a9"];
+front [label="Frontend\nWorkflowHandler"];
+match [label="Matching\nHandler + engine", fillcolor="#f5d98a"];
+partition [label="Task queue partition\nlong poll / sync match"];
+backlog [label="Task queue backlog\nTaskManager.GetTasks"];
+taskdb [label="Matching task store\ncurrent SaaS: Cassandra", fillcolor="#f6e0a9"];
+hist [label="History\nRecordWorkflowTaskStarted"];
+worker -> front [label="external gRPC"];
+front -> match [label="internal gRPC"];
+match -> partition [label="in process"];
+partition -> backlog [label="if no sync task"];
+backlog -> taskdb [label="persistence"];
+partition -> hist [label="internal gRPC"];
+hist -> match [label="task + history response", style=dashed];
+match -> front [label="task response", style=dashed];
+front -> worker [label="poll response", style=dashed];
+}

@@ -1,0 +1,20 @@
+digraph G {
+graph [rankdir=LR, bgcolor="white", pad=0.3, splines=polyline];
+node [shape=box, style="rounded,filled", fontname="Helvetica", color="#54677a", fillcolor="#e8f1fa"];
+edge [fontname="Helvetica", fontsize=10, color="#516a82"];
+matching [label="OSS Matching\ntaskQueueDB", fillcolor="#f5d98a"];
+iface [label="OSS persistence.TaskManager\nand FairTaskManager"];
+factory [label="SaaS CDS factory\nmatchingTaskStore + fair"];
+multi [label="MultiDBMatchingTaskStore\nqueue to Cassandra cluster"];
+cass [label="Cassandra TaskStore", fillcolor="#f6e0a9"];
+walkerp [label="MultiWalkerStoreProvider\nNewMatchingTaskStore: unimplemented", style="rounded,dashed", fillcolor="#ffffff"];
+client [label="Walker datanode client\ngRPC", style="rounded,dashed", fillcolor="#ffffff"];
+datanodes [label="Walker datanodes\nWAL + replicated state", style="rounded,dashed", fillcolor="#ffffff"];
+matching -> iface [label="Create/Get/CompleteTasks"];
+iface -> factory [label="SaaS implementation"];
+factory -> multi [label="current"];
+multi -> cass [label="storage driver"];
+factory -> walkerp [label="migration path", style=dashed];
+walkerp -> client [label="candidate", style=dashed];
+client -> datanodes [label="gRPC", style=dashed];
+}

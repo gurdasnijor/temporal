@@ -1,0 +1,22 @@
+digraph G {
+graph [rankdir=LR, bgcolor="white", pad=0.3, splines=polyline];
+node [shape=box, style="rounded,filled", fontname="Helvetica", color="#54677a", fillcolor="#e8f1fa"];
+edge [fontname="Helvetica", fontsize=10, color="#516a82"];
+client [label="Client\nStartWorkflowExecution", fillcolor="#f6e0a9"];
+front [label="Frontend\nvalidate + route"];
+hist [label="History\nrecord workflow event"];
+db [label="History store\nmutable state + transfer task"];
+transfer [label="History transfer queue\nasync processor"];
+add [label="Matching\nAddWorkflowTask", fillcolor="#f5d98a"];
+sync [label="Sync match\nwaiting poller"];
+backlog [label="Backlog\nTaskManager.CreateTasks"];
+taskdb [label="Matching task store\ncurrent SaaS: Cassandra", fillcolor="#f6e0a9"];
+client -> front [label="external gRPC"];
+front -> hist [label="internal gRPC"];
+hist -> db [label="persistence"];
+db -> transfer [label="transfer task"];
+transfer -> add [label="internal gRPC"];
+add -> sync [label="poller present"];
+add -> backlog [label="otherwise"];
+backlog -> taskdb [label="persistence"];
+}
