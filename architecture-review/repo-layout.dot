@@ -1,0 +1,30 @@
+digraph G {
+graph [rankdir=LR, bgcolor="white", pad=0.3, compound=true];
+node [shape=box, style="rounded,filled", fontname="Helvetica", color="#54677a", fillcolor="#e8f1fa"];
+edge [fontname="Helvetica", fontsize=10, color="#516a82"];
+subgraph cluster_oss {
+  label="temporal  •  Go module: go.temporal.io/server";
+  color="#87a8c6";
+  api [label="api/ + proto/\npublic/internal RPC contracts"];
+  client [label="client/\ninter-service clients"];
+  services [label="service/\nfrontend • history • matching • worker"];
+  common [label="common/\nshared utilities + persistence interfaces"];
+  schema [label="schema/\ndatabase schemas"];
+}
+subgraph cluster_saas {
+  label="saas-temporal  •  Go module: github.com/temporalio/saas-temporal";
+  color="#c5ad76";
+  cds [label="cds/export/cds/\npersistence factory"];
+  storage [label="cds/storage/\nCassandra + Walker adapters"];
+  subgraph cluster_walker {
+    label="walker/  •  nested Go module";
+    color="#d3bc87";
+    walker [label="datanode/ • wkeys/ • replication/\nWalker storage system", fillcolor="#fff2d6"];
+  }
+}
+services -> client [label="Go imports"];
+services -> common [label="Go imports"];
+cds -> storage [label="Go imports"];
+storage -> walker [label="Go imports"];
+cds -> common [label="binds persistence interfaces", style=dashed];
+}
