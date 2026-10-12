@@ -1,0 +1,24 @@
+digraph G {
+graph [rankdir=TB, bgcolor="white", pad=0.3, nodesep=0.3, ranksep=0.45];
+node [shape=box, style="rounded,filled", fontname="Helvetica", color="#54677a"];
+edge [color="#516a82", arrowsize=0.7];
+"5a6cf13a9526ba79" [label="frontend / Server\nPollWorkflowTaskQueue\n21,442.73 ms", fillcolor="#dcecfb"];
+"54dbd4389ef7ba1a" [label="frontend / Client\nPollWorkflowTaskQueue\n21,437.65 ms", fillcolor="#dcecfb"];
+"5a6cf13a9526ba79" -> "54dbd4389ef7ba1a";
+"1e302fd3d69895ef" [label="matching / Server\nPollWorkflowTaskQueue\n21,434.32 ms", fillcolor="#f5d98a"];
+"54dbd4389ef7ba1a" -> "1e302fd3d69895ef";
+"b36b3479e62c3242" [label="matching / Client\nPollWorkflowTaskQueue\n21,431.62 ms", fillcolor="#f5d98a"];
+"1e302fd3d69895ef" -> "b36b3479e62c3242";
+"eb2fa7f06fb1bf04" [label="matching / Server\nPollWorkflowTaskQueue\n21,426.42 ms", fillcolor="#f5d98a"];
+"b36b3479e62c3242" -> "eb2fa7f06fb1bf04";
+"165a998968818ec6" [label="matching / Client\nGetMutableState\n3.11 ms", fillcolor="#f5d98a"];
+"eb2fa7f06fb1bf04" -> "165a998968818ec6";
+"da15edb01831ca21" [label="history / Server\nGetMutableState\n0.53 ms", fillcolor="#dbf0dc"];
+"165a998968818ec6" -> "da15edb01831ca21";
+"ff7363a688cb5357" [label="matching / Client\nGetWorkflowExecutionHistory\n16.84 ms", fillcolor="#f5d98a"];
+"eb2fa7f06fb1bf04" -> "ff7363a688cb5357";
+"b2dcb58a9ce6681c" [label="history / Server\nGetWorkflowExecutionHistory\n11.79 ms", fillcolor="#dbf0dc"];
+"ff7363a688cb5357" -> "b2dcb58a9ce6681c";
+"765e2225d440a5c2" [label="history / Internal\nReadHistoryBranch\n3.75 ms", fillcolor="#dbf0dc"];
+"b2dcb58a9ce6681c" -> "765e2225d440a5c2";
+}

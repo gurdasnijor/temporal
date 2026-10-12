@@ -1,0 +1,107 @@
+{
+  "source": "CH-UI read-only query of otel.otel_traces",
+  "queried_at": "2026-10-02",
+  "trace_id": "9451a4b0a7d279de16b07f8d07c8b3e5",
+  "spans": [
+    {
+      "timestamp": "2026-10-02 21:11:26.770763055",
+      "service": "io.temporal.frontend",
+      "name": "temporal.api.workflowservice.v1.WorkflowService/PollWorkflowTaskQueue",
+      "kind": "Server",
+      "span_id": "5a6cf13a9526ba79",
+      "parent_span_id": "",
+      "duration_ms": 21442.73,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:26.771723835",
+      "service": "io.temporal.frontend",
+      "name": "temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue",
+      "kind": "Client",
+      "span_id": "54dbd4389ef7ba1a",
+      "parent_span_id": "5a6cf13a9526ba79",
+      "duration_ms": 21437.65,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:26.772403809",
+      "service": "io.temporal.matching",
+      "name": "temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue",
+      "kind": "Server",
+      "span_id": "1e302fd3d69895ef",
+      "parent_span_id": "54dbd4389ef7ba1a",
+      "duration_ms": 21434.32,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:26.773135226",
+      "service": "io.temporal.matching",
+      "name": "temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue",
+      "kind": "Client",
+      "span_id": "b36b3479e62c3242",
+      "parent_span_id": "1e302fd3d69895ef",
+      "duration_ms": 21431.62,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:26.773740013",
+      "service": "io.temporal.matching",
+      "name": "temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue",
+      "kind": "Server",
+      "span_id": "eb2fa7f06fb1bf04",
+      "parent_span_id": "b36b3479e62c3242",
+      "duration_ms": 21426.42,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:48.177734458",
+      "service": "io.temporal.matching",
+      "name": "temporal.server.api.historyservice.v1.HistoryService/GetMutableState",
+      "kind": "Client",
+      "span_id": "165a998968818ec6",
+      "parent_span_id": "eb2fa7f06fb1bf04",
+      "duration_ms": 3.11,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:48.179775260",
+      "service": "io.temporal.history",
+      "name": "temporal.server.api.historyservice.v1.HistoryService/GetMutableState",
+      "kind": "Server",
+      "span_id": "da15edb01831ca21",
+      "parent_span_id": "165a998968818ec6",
+      "duration_ms": 0.53,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:48.181223353",
+      "service": "io.temporal.matching",
+      "name": "temporal.server.api.historyservice.v1.HistoryService/GetWorkflowExecutionHistory",
+      "kind": "Client",
+      "span_id": "ff7363a688cb5357",
+      "parent_span_id": "eb2fa7f06fb1bf04",
+      "duration_ms": 16.84,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:48.182083447",
+      "service": "io.temporal.history",
+      "name": "temporal.server.api.historyservice.v1.HistoryService/GetWorkflowExecutionHistory",
+      "kind": "Server",
+      "span_id": "b2dcb58a9ce6681c",
+      "parent_span_id": "ff7363a688cb5357",
+      "duration_ms": 11.79,
+      "status": "Unset"
+    },
+    {
+      "timestamp": "2026-10-02 21:11:48.182792638",
+      "service": "io.temporal.history",
+      "name": "persistence.ExecutionStore/ReadHistoryBranch",
+      "kind": "Internal",
+      "span_id": "765e2225d440a5c2",
+      "parent_span_id": "b2dcb58a9ce6681c",
+      "duration_ms": 3.75,
+      "status": "Unset"
+    }
+  ]
+}

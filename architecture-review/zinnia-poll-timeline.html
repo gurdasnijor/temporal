@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zinnia Temporal poll trace</title>
+  <style>
+    :root { color-scheme: light; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; background: #f7f9fc; color: #17283d; }
+    body { margin: 0; }
+    main { max-width: 1280px; margin: auto; padding: 28px; }
+    h1 { margin: 0 0 6px; font-size: 28px; }
+    p { line-height: 1.5; }
+    .subtle { color: #52657b; margin-top: 0; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 22px 0; }
+    button { border: 1px solid #b9c9da; background: white; color: #17283d; border-radius: 9px; padding: 9px 14px; font: inherit; cursor: pointer; }
+    button[aria-pressed="true"] { background: #1e4775; color: white; border-color: #1e4775; }
+    .card { background: white; border: 1px solid #dae4ee; border-radius: 14px; box-shadow: 0 3px 18px #18375d0c; padding: 18px; margin-bottom: 16px; }
+    .card h2 { font-size: 19px; margin: 0 0 10px; }
+    .card svg { display: block; width: 100%; height: auto; }
+    .hidden { display: none; }
+    .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: #52657b; margin-bottom: 12px; }
+    .swatch { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; }
+    .detail { min-height: 50px; background: #eef4fa; border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+    .scroll { overflow-x: auto; }
+    .waterfall { min-width: 1080px; }
+    .water-row { display: grid; grid-template-columns: 390px 1fr; gap: 8px; align-items: center; min-height: 38px; border-top: 1px solid #edf1f5; cursor: pointer; }
+    .water-row:hover { background: #f5f8fc; }
+    .water-label { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track { height: 23px; position: relative; background: repeating-linear-gradient(90deg, #f2f6fa 0, #f2f6fa 1px, transparent 1px, transparent 20%); border-radius: 5px; }
+    .bar { position: absolute; top: 5px; height: 13px; border-radius: 4px; min-width: 3px; }
+    .axis { display: flex; justify-content: space-between; margin-left: 398px; font-size: 12px; color: #63788e; }
+    code { background: #edf2f7; border-radius: 4px; padding: 2px 5px; }
+    @media (max-width: 700px) { main { padding: 14px; } h1 { font-size: 23px; } .card { padding: 12px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>A real workflow task poll</h1>
+    <p class="subtle">Zinnia Temporal · 2026-10-02 · trace <code id="trace-id"></code> · 10 recorded spans</p>
+    <div class="toolbar" role="group" aria-label="Visualization">
+      <button id="sequence-tab" aria-pressed="true">Activity sequence</button>
+      <button id="waterfall-tab" aria-pressed="false">Span waterfall</button>
+      <span id="range-controls" class="hidden">
+        <button id="full-range" aria-pressed="true">Full 21.4 s</button>
+        <button id="last-range" aria-pressed="false">Last 60 ms</button>
+      </span>
+    </div>
+    <section id="sequence-view" class="card">
+      <h2>Calls in start order</h2>
+      <p class="subtle">The 21.4-second gap is compressed so short calls remain visible. Arrows represent recorded client or internal spans; the external worker has no span in this trace.</p>
+      <div class="scroll"><svg id="sequence-svg" viewBox="0 0 1120 740" role="img" aria-label="Sequence of Frontend, Matching, History, and persistence calls"></svg></div>
+    </section>
+    <section id="waterfall-view" class="card hidden">
+      <h2>Span timing and nesting</h2>
+      <p class="subtle">Each row is one recorded span. Zoom into the last 60 ms to see the History and persistence calls.</p>
+      <div class="legend"><span><i class="swatch" style="background:#80b3e3"></i>Frontend</span><span><i class="swatch" style="background:#e8bd55"></i>Matching</span><span><i class="swatch" style="background:#86c995"></i>History</span></div>
+      <div class="scroll"><div class="waterfall"><div id="axis" class="axis"></div><div id="water-rows"></div></div></div>
+    </section>
+    <div class="card"><h2>Selected span</h2><div id="details" class="detail" aria-live="polite">Select an arrow or bar for its timing and parent span.</div></div>
+    <p class="subtle">Source: read-only query of <code>otel.otel_traces</code> in Zinnia ClickHouse. This shows observed OSS service calls; it does not show Walker.</p>
+  </main>
+  <script id="trace-data" type="application/json">{"source":"CH-UI read-only query of otel.otel_traces","queried_at":"2026-10-02","trace_id":"9451a4b0a7d279de16b07f8d07c8b3e5","spans":[{"timestamp":"2026-10-02 21:11:26.770763055","service":"io.temporal.frontend","name":"temporal.api.workflowservice.v1.WorkflowService/PollWorkflowTaskQueue","kind":"Server","span_id":"5a6cf13a9526ba79","parent_span_id":"","duration_ms":21442.73,"status":"Unset"},{"timestamp":"2026-10-02 21:11:26.771723835","service":"io.temporal.frontend","name":"temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue","kind":"Client","span_id":"54dbd4389ef7ba1a","parent_span_id":"5a6cf13a9526ba79","duration_ms":21437.65,"status":"Unset"},{"timestamp":"2026-10-02 21:11:26.772403809","service":"io.temporal.matching","name":"temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue","kind":"Server","span_id":"1e302fd3d69895ef","parent_span_id":"54dbd4389ef7ba1a","duration_ms":21434.32,"status":"Unset"},{"timestamp":"2026-10-02 21:11:26.773135226","service":"io.temporal.matching","name":"temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue","kind":"Client","span_id":"b36b3479e62c3242","parent_span_id":"1e302fd3d69895ef","duration_ms":21431.62,"status":"Unset"},{"timestamp":"2026-10-02 21:11:26.773740013","service":"io.temporal.matching","name":"temporal.server.api.matchingservice.v1.MatchingService/PollWorkflowTaskQueue","kind":"Server","span_id":"eb2fa7f06fb1bf04","parent_span_id":"b36b3479e62c3242","duration_ms":21426.42,"status":"Unset"},{"timestamp":"2026-10-02 21:11:48.177734458","service":"io.temporal.matching","name":"temporal.server.api.historyservice.v1.HistoryService/GetMutableState","kind":"Client","span_id":"165a998968818ec6","parent_span_id":"eb2fa7f06fb1bf04","duration_ms":3.11,"status":"Unset"},{"timestamp":"2026-10-02 21:11:48.179775260","service":"io.temporal.history","name":"temporal.server.api.historyservice.v1.HistoryService/GetMutableState","kind":"Server","span_id":"da15edb01831ca21","parent_span_id":"165a998968818ec6","duration_ms":0.53,"status":"Unset"},{"timestamp":"2026-10-02 21:11:48.181223353","service":"io.temporal.matching","name":"temporal.server.api.historyservice.v1.HistoryService/GetWorkflowExecutionHistory","kind":"Client","span_id":"ff7363a688cb5357","parent_span_id":"eb2fa7f06fb1bf04","duration_ms":16.84,"status":"Unset"},{"timestamp":"2026-10-02 21:11:48.182083447","service":"io.temporal.history","name":"temporal.server.api.historyservice.v1.HistoryService/GetWorkflowExecutionHistory","kind":"Server","span_id":"b2dcb58a9ce6681c","parent_span_id":"ff7363a688cb5357","duration_ms":11.79,"status":"Unset"},{"timestamp":"2026-10-02 21:11:48.182792638","service":"io.temporal.history","name":"persistence.ExecutionStore/ReadHistoryBranch","kind":"Internal","span_id":"765e2225d440a5c2","parent_span_id":"b2dcb58a9ce6681c","duration_ms":3.75,"status":"Unset"}]}</script>
+  <script>
+    const trace = JSON.parse(document.getElementById('trace-data').textContent);
+    const spans = trace.spans;
+    const byId = new Map(spans.map(s => [s.span_id, s]));
+    const start = Date.parse(spans[0].timestamp.replace(' ', 'T') + 'Z');
+    const offset = s => Date.parse(s.timestamp.replace(' ', 'T') + 'Z') - start;
+    const end = Math.max(...spans.map(s => offset(s) + s.duration_ms));
+    const color = s => s.service.endsWith('frontend') ? '#80b3e3' : s.service.endsWith('matching') ? '#e8bd55' : '#86c995';
+    const shortName = s => s.name.split('/').at(-1);
+    const service = s => s.service.replace('io.temporal.', '');
+    const duration = ms => ms >= 1000 ? `${(ms/1000).toFixed(2)} s` : `${ms.toFixed(2)} ms`;
+    document.getElementById('trace-id').textContent = trace.trace_id;
+    const details = document.getElementById('details');
+    function selectSpan(s) {
+      details.innerHTML = '';
+      const strong = document.createElement('strong');
+      strong.textContent = `${service(s)} / ${s.kind} / ${shortName(s)}`;
+      details.append(strong, document.createElement('br'));
+      details.append(`Start: +${offset(s).toFixed(2)} ms · Duration: ${duration(s.duration_ms)} · Status: ${s.status}`);
+      details.append(document.createElement('br'));
+      details.append(`Span: ${s.span_id} · Parent: ${s.parent_span_id || '(external caller not traced)'}`);
+    }
+    function svg(tag, attrs, parent) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
+      parent.appendChild(el);
+      return el;
+    }
+    const sequence = document.getElementById('sequence-svg');
+    const lanes = [
+      ['Frontend', 120], ['Matching hop 1', 340], ['Matching hop 2', 560],
+      ['History', 780], ['Persistence', 1000]
+    ];
+    for (const [label, x] of lanes) {
+      svg('rect', {x:x-90, y:18, width:180, height:42, rx:9, fill:'#edf3f9', stroke:'#a5bbd0'}, sequence);
+      const t = svg('text', {x, y:45, 'text-anchor':'middle', 'font-size':16, 'font-weight':600, fill:'#203a55'}, sequence);
+      t.textContent = label;
+      svg('line', {x1:x, y1:60, x2:x, y2:715, stroke:'#b5c7d8', 'stroke-dasharray':'5 6'}, sequence);
+    }
+    const defs = svg('defs', {}, sequence);
+    const marker = svg('marker', {id:'arrow', markerWidth:8, markerHeight:8, refX:7, refY:4, orient:'auto'}, defs);
+    svg('path', {d:'M0,0 L8,4 L0,8 Z', fill:'#406385'}, marker);
+    const events = [
+      {span:spans[0], from:120, to:120, y:110, label:'Inbound PollWorkflowTaskQueue'},
+      {span:spans[1], from:120, to:340, y:180, label:'PollWorkflowTaskQueue'},
+      {span:spans[3], from:340, to:560, y:260, label:'PollWorkflowTaskQueue (forwarded)'},
+      {span:spans[5], from:560, to:780, y:455, label:'GetMutableState'},
+      {span:spans[7], from:560, to:780, y:545, label:'GetWorkflowExecutionHistory'},
+      {span:spans[9], from:780, to:1000, y:635, label:'ReadHistoryBranch'}
+    ];
+    for (const e of events) {
+      const g = svg('g', {role:'button', tabindex:0, style:'cursor:pointer'}, sequence);
+      svg('rect', {x:Math.min(e.from,e.to)-95, y:e.y-37,
+        width:Math.abs(e.to-e.from)+190, height:72, fill:'transparent'}, g);
+      if (e.from === e.to) {
+        svg('circle', {cx:e.from, cy:e.y, r:8, fill:color(e.span), stroke:'#49637d'}, g);
+      } else {
+        svg('line', {x1:e.from+8, y1:e.y, x2:e.to-10, y2:e.y, stroke:'#406385', 'stroke-width':2, 'marker-end':'url(#arrow)'}, g);
+      }
+      const t = svg('text', {x:(e.from+e.to)/2, y:e.y-16, 'text-anchor':'middle', 'font-size':14, fill:'#183751'}, g);
+      t.textContent = e.label;
+      const time = svg('text', {x:(e.from+e.to)/2, y:e.y+24, 'text-anchor':'middle', 'font-size':12, fill:'#61778e'}, g);
+      time.textContent = `+${offset(e.span).toFixed(1)} ms · ${duration(e.span.duration_ms)}`;
+      g.addEventListener('click', () => selectSpan(e.span));
+      g.addEventListener('keydown', ev => { if (ev.key === 'Enter') selectSpan(e.span); });
+    }
+    svg('rect', {x:230, y:323, width:650, height:73, rx:11, fill:'#fff2d5', stroke:'#dfbd71'}, sequence);
+    const gap = svg('text', {x:555, y:351, 'text-anchor':'middle', 'font-size':16, 'font-weight':600, fill:'#674c16'}, sequence);
+    gap.textContent = 'About 21.4 seconds waiting in the long poll';
+    const note = svg('text', {x:555, y:378, 'text-anchor':'middle', 'font-size':13, fill:'#705b31'}, sequence);
+    note.textContent = 'Time compressed here; no service span starts during this gap.';
+
+    function depth(s) {
+      let n=0, cur=s;
+      while (cur.parent_span_id && byId.has(cur.parent_span_id)) { n++; cur=byId.get(cur.parent_span_id); }
+      return n;
+    }
+    let view = 'full';
+    function drawWaterfall() {
+      const lower = view === 'full' ? 0 : end-60;
+      const upper = end;
+      const duration = upper-lower;
+      document.getElementById('axis').innerHTML = '';
+      for (let i=0; i<=5; i++) {
+        const tick = document.createElement('span');
+        tick.textContent = view === 'full'
+          ? `+${((lower + duration*i/5)/1000).toFixed(1)} s`
+          : `${(lower + duration*i/5 - end).toFixed(0)} ms`;
+        document.getElementById('axis').appendChild(tick);
+      }
+      const rows = document.getElementById('water-rows');
+      rows.innerHTML = '';
+      for (const s of spans) {
+        const row = document.createElement('div'); row.className='water-row'; row.tabIndex=0;
+        const label = document.createElement('div'); label.className='water-label';
+        label.style.paddingLeft = `${depth(s)*17}px`;
+        label.textContent = `${service(s)} / ${s.kind} / ${shortName(s)}`;
+        const track = document.createElement('div'); track.className='bar-track';
+        const from = Math.max(offset(s), lower);
+        const to = Math.min(offset(s)+s.duration_ms, upper);
+        if (to > from) {
+          const bar = document.createElement('div'); bar.className='bar';
+          bar.style.left = `${100*(from-lower)/duration}%`;
+          bar.style.width = `${Math.max(100*(to-from)/duration, 0.4)}%`;
+          bar.style.background = color(s);
+          bar.title = `${s.name} · ${s.duration_ms.toFixed(2)} ms`;
+          track.appendChild(bar);
+        }
+        row.append(label, track); row.addEventListener('click', () => selectSpan(s));
+        row.addEventListener('keydown', ev => { if (ev.key === 'Enter') selectSpan(s); });
+        rows.appendChild(row);
+      }
+    }
+    drawWaterfall();
+    function setMode(mode) {
+      document.getElementById('sequence-view').classList.toggle('hidden', mode !== 'sequence');
+      document.getElementById('waterfall-view').classList.toggle('hidden', mode !== 'waterfall');
+      document.getElementById('range-controls').classList.toggle('hidden', mode !== 'waterfall');
+      document.getElementById('sequence-tab').setAttribute('aria-pressed', mode === 'sequence');
+      document.getElementById('waterfall-tab').setAttribute('aria-pressed', mode === 'waterfall');
+    }
+    document.getElementById('sequence-tab').onclick = () => setMode('sequence');
+    document.getElementById('waterfall-tab').onclick = () => setMode('waterfall');
+    document.getElementById('full-range').onclick = () => { view='full'; drawWaterfall(); document.getElementById('full-range').setAttribute('aria-pressed','true'); document.getElementById('last-range').setAttribute('aria-pressed','false'); };
+    document.getElementById('last-range').onclick = () => { view='last'; drawWaterfall(); document.getElementById('full-range').setAttribute('aria-pressed','false'); document.getElementById('last-range').setAttribute('aria-pressed','true'); };
+  </script>
+</body>
+</html>

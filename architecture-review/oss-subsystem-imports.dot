@@ -1,0 +1,36 @@
+digraph G {
+graph [rankdir=LR, bgcolor="white", pad=0.25, overlap=false, splines=true];
+node [shape=box, style="rounded,filled", fillcolor="#e5f1ff", color="#4c78a8", fontname="Helvetica"];
+edge [color="#8a9bae", arrowsize=0.7, fontname="Helvetica", fontsize=10];
+"client/frontend" [label="client/frontend"];
+"client/history" [label="client/history"];
+"client/matching" [label="client/matching"];
+"common/persistence" [label="common/persistence"];
+"common/persistence/client" [label="common/persistence/client"];
+"service/frontend" [label="service/frontend"];
+"service/history" [label="service/history"];
+"service/matching" [label="service/matching"];
+"service/worker" [label="service/worker"];
+"client/history" -> "common/persistence" [label="1", penwidth=1.1];
+"client/history" -> "service/history" [label="2", penwidth=1.2];
+"common/persistence" -> "service/history" [label="1", penwidth=1.1];
+"common/persistence/client" -> "common/persistence" [label="1", penwidth=1.1];
+"common/persistence/client" -> "service/history" [label="1", penwidth=1.1];
+"service/frontend" -> "client/frontend" [label="1", penwidth=1.1];
+"service/frontend" -> "client/history" [label="1", penwidth=1.1];
+"service/frontend" -> "client/matching" [label="1", penwidth=1.1];
+"service/frontend" -> "common/persistence" [label="1", penwidth=1.1];
+"service/frontend" -> "service/history" [label="4", penwidth=1.5];
+"service/frontend" -> "service/worker" [label="8", penwidth=2.0];
+"service/history" -> "client/history" [label="2", penwidth=1.2];
+"service/history" -> "common/persistence" [label="29", penwidth=4.6];
+"service/history" -> "common/persistence/client" [label="1", penwidth=1.1];
+"service/history" -> "service/worker" [label="2", penwidth=1.2];
+"service/matching" -> "client/matching" [label="1", penwidth=1.1];
+"service/matching" -> "common/persistence" [label="1", penwidth=1.1];
+"service/matching" -> "service/history" [label="2", penwidth=1.2];
+"service/matching" -> "service/worker" [label="1", penwidth=1.1];
+"service/worker" -> "common/persistence" [label="11", penwidth=2.4];
+"service/worker" -> "service/history" [label="3", penwidth=1.4];
+"service/worker" -> "service/matching" [label="1", penwidth=1.1];
+}

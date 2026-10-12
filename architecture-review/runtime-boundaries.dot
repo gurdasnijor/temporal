@@ -1,0 +1,23 @@
+digraph G {
+graph [rankdir=LR, bgcolor="white", pad=0.3, compound=true, splines=polyline];
+node [shape=box, style="rounded,filled", fontname="Helvetica", color="#54677a", fillcolor="#e8f1fa"];
+edge [fontname="Helvetica", fontsize=10, color="#516a82"];
+sdk [label="SDK client / worker", fillcolor="#f6e0a9"];
+frontend [label="Frontend\nWorkflowService gRPC\nHTTP API / Nexus HTTP"];
+history [label="History\nworkflow execution / transfer queue"];
+matching [label="Matching\ntask queue partitions / long polls", fillcolor="#f5d98a"];
+persist [label="OSS persistence interfaces\nTaskManager / FairTaskManager"];
+history_store [label="History persistence\nexecution store"];
+cassandra [label="Cassandra matching task stores", fillcolor="#f6e0a9"];
+walker [label="Walker matching task stores\nnot implemented", style="rounded,dashed", fillcolor="#ffffff"];
+sdk -> frontend [label="external gRPC / HTTP"];
+frontend -> history [label="internal gRPC"];
+frontend -> matching [label="internal gRPC: poll"];
+history -> matching [label="internal gRPC: add task"];
+matching -> history [label="internal gRPC: record task start"];
+matching -> matching [label="partition forwarding\ninternal gRPC", color="#a57421"];
+history -> history_store [label="execution persistence"];
+matching -> persist [label="task queue persistence"];
+persist -> cassandra [label="SaaS current matching"];
+persist -> walker [label="SaaS target", style=dashed];
+}

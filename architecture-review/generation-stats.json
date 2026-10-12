@@ -1,0 +1,7 @@
+{
+  "oss_packages": 159,
+  "saas_packages": 9,
+  "matching_direct_internal_imports": 62,
+  "oss_aggregated_edges": 22,
+  "saas_aggregated_edges": 9
+}
