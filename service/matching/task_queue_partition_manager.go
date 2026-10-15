@@ -661,6 +661,10 @@ func (pm *taskQueuePartitionManagerImpl) grantEagerDispatch(
 		if backlogPriority == 0 || backlogPriority > priority {
 			granted = pm.rateLimitManager.grantTokens(item.GetPriority(), item.GetCount())
 		}
+		if granted > 0 {
+			// Unclipped, like the key TrySyncMatch tracks added tasks under.
+			targets[index].physicalQueue.RecordEagerGrant(priorityKey(item.GetPriority().GetPriorityKey()), granted)
+		}
 		responseItems[index] = &matchingservice.GrantEagerDispatchResponse_Item{
 			GrantedCount: granted,
 		}
@@ -1343,7 +1347,12 @@ func (pm *taskQueuePartitionManagerImpl) describe(
 		if dbq == nil {
 			return nil, errDefaultQueueNotInit
 		}
-		unversionedStatsByPriority = dbq.GetStatsByPriority(true)
+		unversionedStatsByPriority = cloneStatsByPriority(dbq.GetStatsByPriority(true))
+		// Eager grants identify their target version, so their rates stay on the physical queue
+		// that granted them rather than being attributed to the current and ramping versions.
+		for _, stats := range unversionedStatsByPriority {
+			stats.EagerDispatchRate = 0
+		}
 
 		userData, _, err := pm.GetUserDataManager().GetUserData()
 		if err != nil {
