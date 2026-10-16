@@ -264,11 +264,17 @@ func (h *handler) grantEagerActivityDispatch(
 	namespaceID string,
 	request *workflowservice.StartActivityExecutionRequest,
 ) bool {
+	if h.matchingClient == nil {
+		return false
+	}
+
+	metrics.EagerDispatchRequestsSent.With(eagerActivityMetricsHandler(h.metricsHandler, h.config, request)).Record(1)
 	return common.GrantEagerDispatch(
 		ctx,
 		h.matchingClient,
 		namespaceID,
 		request.GetTaskQueue().GetName(),
+		enumspb.TASK_QUEUE_TYPE_ACTIVITY,
 		request.GetPriority(),
 		nil,
 	)
