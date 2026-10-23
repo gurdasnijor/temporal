@@ -49,7 +49,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sony/gobreaker v1.0.0
 	github.com/stretchr/testify v1.11.1
-	github.com/temporalio/ringpop-go v0.1.0
+	github.com/temporalio/ringpop-go v0.1.1
 	github.com/temporalio/sqlparser v0.1.0
 	github.com/temporalio/tchannel-go v1.22.1
 	github.com/tidwall/btree v1.8.1
@@ -70,7 +70,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.45.0
 	go.opentelemetry.io/otel/trace v1.45.0
 	go.opentelemetry.io/proto/otlp v1.11.0
-	go.temporal.io/api v1.63.8-0.20261014175806-0610a4fb399a
+	go.temporal.io/api v1.63.8-0.20261014221631-25d6833c5701
 	go.temporal.io/auto-scaled-workers v0.0.0-20261013231030-67ffdef6330d
 	go.temporal.io/sdk v1.49.0
 	go.uber.org/fx v1.24.0
