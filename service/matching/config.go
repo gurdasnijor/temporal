@@ -91,6 +91,7 @@ type (
 		EmitTaskDispatchLatencyAtPoll            dynamicconfig.BoolPropertyFnWithTaskQueueFilter
 		QueryWorkflowTaskTimeoutLogRate          dynamicconfig.FloatPropertyFnWithTaskQueueFilter
 		MembershipUnloadDelay                    dynamicconfig.DurationPropertyFn
+		MaxConcurrentForceLoadPartitions         dynamicconfig.IntPropertyFn
 		TaskQueueInfoByBuildIdTTL                dynamicconfig.DurationPropertyFnWithTaskQueueFilter
 		PriorityLevels                           dynamicconfig.IntPropertyFnWithTaskQueueFilter
 
@@ -351,6 +352,7 @@ func NewConfig(
 		EmitTaskDispatchLatencyAtPoll:            dynamicconfig.MatchingEmitTaskDispatchLatencyAtPoll.Get(dc),
 		QueryWorkflowTaskTimeoutLogRate:          dynamicconfig.MatchingQueryWorkflowTaskTimeoutLogRate.Get(dc),
 		MembershipUnloadDelay:                    dynamicconfig.MatchingMembershipUnloadDelay.Get(dc),
+		MaxConcurrentForceLoadPartitions:         dynamicconfig.MatchingMaxConcurrentForceLoadPartitions.Get(dc),
 		TaskQueueInfoByBuildIdTTL:                dynamicconfig.TaskQueueInfoByBuildIdTTL.Get(dc),
 		PriorityLevels:                           dynamicconfig.MatchingPriorityLevels.Get(dc),
 		FairnessKeyRateLimitCacheSize:            dynamicconfig.MatchingFairnessKeyRateLimitCacheSize.Get(dc),

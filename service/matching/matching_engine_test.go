@@ -75,6 +75,7 @@ import (
 	"go.temporal.io/server/service/history/consts"
 	"go.temporal.io/server/service/history/hsm/nexusoperations"
 	"go.uber.org/mock/gomock"
+	"golang.org/x/sync/semaphore"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -2147,6 +2148,50 @@ func (s *matchingEngineSuite) TestForceUnloadTaskQueue() {
 	// Adding a task should now fast fail
 	_, _, err = s.matchingEngine.AddWorkflowTask(ctx, &addTaskRequest)
 	s.ErrorAs(err, new(*serviceerrors.StickyWorkerUnavailable))
+}
+
+func (s *matchingEngineSuite) TestForceLoadTaskQueuePartition_ConcurrencyLimit() {
+	s.matchingEngine.forceLoadSem = semaphore.NewWeighted(1)
+	namespaceID := uuid.NewString()
+	forceLoad := func(ctx context.Context, tq string) (*matchingservice.ForceLoadTaskQueuePartitionResponse, error) {
+		return s.matchingEngine.ForceLoadTaskQueuePartition(ctx, &matchingservice.ForceLoadTaskQueuePartitionRequest{
+			NamespaceId: namespaceID,
+			TaskQueuePartition: &taskqueuespb.TaskQueuePartition{
+				TaskQueue:     tq,
+				TaskQueueType: enumspb.TASK_QUEUE_TYPE_WORKFLOW,
+				PartitionId:   &taskqueuespb.TaskQueuePartition_NormalPartitionId{NormalPartitionId: 1},
+			},
+		})
+	}
+
+	resp, err := forceLoad(context.Background(), "loaded")
+	s.NoError(err)
+	s.True(resp.WasUnloaded)
+
+	// Hold the only slot, as if another partition were initializing.
+	s.NoError(s.matchingEngine.forceLoadSem.Acquire(context.Background(), 1))
+
+	// A partition that's already loaded doesn't wait for a slot.
+	resp, err = forceLoad(context.Background(), "loaded")
+	s.NoError(err)
+	s.False(resp.WasUnloaded)
+
+	// A partition that needs creating waits for one.
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+	_, err = forceLoad(ctx, "unloaded")
+	s.ErrorIs(err, context.DeadlineExceeded)
+	family, err := tqid.NewTaskQueueFamily(namespaceID, "unloaded")
+	s.NoError(err)
+	pm, _, err := s.matchingEngine.getTaskQueuePartitionManager(
+		context.Background(), family.TaskQueue(enumspb.TASK_QUEUE_TYPE_WORKFLOW).NormalPartition(1), false, loadCauseForce)
+	s.NoError(err)
+	s.Nil(pm)
+
+	s.matchingEngine.forceLoadSem.Release(1)
+	resp, err = forceLoad(context.Background(), "unloaded")
+	s.NoError(err)
+	s.True(resp.WasUnloaded)
 }
 
 func (s *matchingEngineSuite) TestMultipleEnginesActivitiesRangeStealing() {

@@ -68,6 +68,7 @@ import (
 	"go.temporal.io/server/service/history/api"
 	"go.temporal.io/server/service/matching/hooks"
 	"go.temporal.io/server/service/worker/workerdeployment"
+	"golang.org/x/sync/semaphore"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -208,6 +209,9 @@ type (
 		reachabilityCache reachabilityCache
 		// Rate limiter to limit the task dispatch
 		rateLimiter TaskDispatchRateLimiter
+		// Limits concurrent partition initializations caused by ForceLoadTaskQueuePartition.
+		// Nil means no limit.
+		forceLoadSem *semaphore.Weighted
 
 		taskHookFactories []hooks.TaskHookFactory
 	}
@@ -343,6 +347,9 @@ func NewEngine(
 		e.timeSource,
 	)
 	e.nexusEndpointsOwnershipLostCh.Store(make(chan struct{}))
+	if n := config.MaxConcurrentForceLoadPartitions(); n > 0 {
+		e.forceLoadSem = semaphore.NewWeighted(int64(n))
+	}
 	e.reachabilityCache = newReachabilityCache(
 		metrics.NoopMetricsHandler,
 		visibilityManager,
@@ -2696,6 +2703,20 @@ func (e *matchingEngineImpl) ForceLoadTaskQueuePartition(
 	req *matchingservice.ForceLoadTaskQueuePartitionRequest,
 ) (*matchingservice.ForceLoadTaskQueuePartitionResponse, error) {
 	partition := tqid.PartitionFromPartitionProto(req.GetTaskQueuePartition(), req.GetNamespaceId())
+	if e.forceLoadSem != nil {
+		// When many root partitions load at once (e.g. a cluster restart), each one force-loads its
+		// children, and initializing all of them in parallel can spike memory. Only creation is
+		// limited: a partition that's already loaded returns without waiting.
+		if pm, _, err := e.getTaskQueuePartitionManager(ctx, partition, false, loadCauseForce); err != nil {
+			return nil, err
+		} else if pm != nil {
+			return &matchingservice.ForceLoadTaskQueuePartitionResponse{WasUnloaded: false}, nil
+		}
+		if err := e.forceLoadSem.Acquire(ctx, 1); err != nil {
+			return nil, err
+		}
+		defer e.forceLoadSem.Release(1)
+	}
 	// Leverage getTaskQueuePartitionManager to check and then create the partition
 	_, wasUnloaded, err := e.getTaskQueuePartitionManager(ctx, partition, true, loadCauseForce)
 	if err != nil {

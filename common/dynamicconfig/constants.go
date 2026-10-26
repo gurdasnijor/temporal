@@ -1560,6 +1560,14 @@ like partition and worker-version) instead of being emitted at the matcher level
 		`MatchingMembershipUnloadDelay is how long to wait to re-confirm loss of ownership before unloading a task queue.
 Set to zero to disable proactive unload.`,
 	)
+	MatchingMaxConcurrentForceLoadPartitions = NewGlobalIntSetting(
+		"matching.maxConcurrentForceLoadPartitions",
+		50,
+		`MatchingMaxConcurrentForceLoadPartitions limits how many partitions a matching host initializes
+concurrently in response to ForceLoadTaskQueuePartition, which root partitions send to their children
+when they load. Requests for partitions that are already loaded are not limited. Read at startup.
+Zero or less disables the limit.`,
+	)
 	MatchingQueryWorkflowTaskTimeoutLogRate = NewTaskQueueFloatSetting(
 		"matching.queryWorkflowTaskTimeoutLogRate",
 		0.0,
