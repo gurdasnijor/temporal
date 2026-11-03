@@ -230,3 +230,6 @@ tool golang.org/x/perf/cmd/benchstat
 
 // Use the local testx; consumers of the server ignore this replace.
 replace go.temporal.io/testx => ./common/testx
+
+// TODO: drop once temporalio/ringpop-go#24 is merged and tagged.
+replace github.com/temporalio/ringpop-go => github.com/dnr/ringpop-go v0.0.0-20261027045906-de5d836e8603

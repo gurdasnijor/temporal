@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -76,6 +77,11 @@ const (
 	// This seems aggressive, but the default sticky schedule_to_start timeout is 5s, so 10s seems reasonable.
 	stickyPollerUnavailableWindow = 10 * time.Second
 
+	// During a gradual membership change, we check ownership of each partition when it may
+	// change. We wait this long after the earliest such time so that checks for nearby times
+	// are batched together.
+	gradualMembershipChangeBatchDelay = 100 * time.Millisecond
+
 	// Fraction of the long poll interval used as the maximum jitter for non-forwarded polls.
 	// Approximately matches the original 10s jitter on the default 60s interval (1/6 ≈ 16.7%).
 	// Spreads out expiration times across pollers to prevent thundering herd reconnects.
@@ -129,6 +135,12 @@ type (
 		update    persistence.SingleTaskQueueUserDataUpdate
 	}
 
+	// routeCheck is a time at which ownership of a loaded partition may change.
+	routeCheck struct {
+		at        time.Time
+		partition tqid.Partition
+	}
+
 	gaugeMetrics struct {
 		loadedTaskQueueFamilyCount    map[taskQueueCounterKey]int
 		loadedTaskQueueCount          map[taskQueueCounterKey]int
@@ -177,6 +189,11 @@ type (
 		partitionScalerFactory        PartitionScalerFactory
 		versionChecker                headers.VersionChecker
 		testHooks                     testhooks.TestHooks
+		// Partitions loaded during a gradual membership change, whose ownership may change
+		// without a membership changed event. watchMembership picks them up from here.
+		routeChecksLock   sync.Mutex
+		routeChecksLoaded []routeCheck
+		routeChecksCh     chan struct{}
 		// queryResults maps query TaskID (which is a UUID generated in QueryWorkflow() call) to a channel
 		// that QueryWorkflow() will block on. The channel is unblocked either by worker sending response through
 		// RespondQueryTaskCompleted() or through an internal service error causing temporal to be unable to dispatch
@@ -309,6 +326,7 @@ func NewEngine(
 		hostInfoProvider:       hostInfoProvider,
 		serviceResolver:        resolver,
 		membershipChangedCh:    make(chan *membership.ChangedEvent, 1), // allow one signal to be buffered while we're working
+		routeChecksCh:          make(chan struct{}, 1),
 		clusterMeta:            clusterMeta,
 		timeSource:             clock.NewRealTimeSource(), // No need to mock this at the moment
 		visibilityManager:      visibilityManager,
@@ -444,23 +462,101 @@ func (e *matchingEngineImpl) watchMembership() {
 		return err == nil && addr != self
 	}
 
-	for range e.membershipChangedCh {
+	// Partitions that have an unload scheduled, so that we don't schedule duplicate unloads
+	// when rescanning periodically.
+	var pendingLock sync.Mutex
+	pending := make(map[tqid.PartitionKey]struct{})
+	needsUnload := func(p tqid.Partition) bool {
+		if !ownedByOther(p) {
+			return false
+		}
+		pendingLock.Lock()
+		defer pendingLock.Unlock()
+		if _, ok := pending[p.Key()]; ok {
+			return false
+		}
+		pending[p.Key()] = struct{}{}
+		return true
+	}
+
+	// During a gradual membership change, ownership of individual partitions changes at
+	// different times without membership change events. We keep a queue of the times at which
+	// ownership of loaded partitions may change, and check them at those times.
+	newChecks := func() collection.Queue[routeCheck] {
+		return collection.NewPriorityQueue(func(a, b routeCheck) bool { return a.at.Before(b.at) })
+	}
+	checks := newChecks()
+	checkTimer := time.NewTimer(0)
+	checkTimer.Stop() // until we have something in the queue
+
+	for {
+		scanAll := false
+		var due []tqid.Partition
+		select {
+		case _, ok := <-e.membershipChangedCh:
+			if !ok {
+				return
+			}
+			scanAll = true
+		case <-checkTimer.C:
+			now := time.Now()
+			for !checks.IsEmpty() && !checks.Peek().at.After(now) {
+				due = append(due, checks.Remove().partition)
+			}
+		case <-e.routeChecksCh:
+			e.routeChecksLock.Lock()
+			for _, c := range e.routeChecksLoaded {
+				checks.Add(c)
+			}
+			e.routeChecksLoaded = nil
+			e.routeChecksLock.Unlock()
+		}
+
 		delay := e.config.MembershipUnloadDelay()
 		if delay == 0 {
+			checks = newChecks()
 			continue
 		}
 
-		e.notifyNexusEndpointsOwnershipChange()
+		if scanAll {
+			e.notifyNexusEndpointsOwnershipChange()
+			// We're about to recompute change times for all partitions.
+			checks = newChecks()
+		}
 
-		// Check all our loaded partitions to see if we lost ownership of any of them.
+		// On a membership change, check all our loaded partitions to see if we lost ownership
+		// of any of them. Otherwise, check the ones that are due (if they're still loaded).
+		var partitions []tqid.Partition
 		e.partitionsLock.RLock()
-		partitions := make([]tqid.Partition, 0, len(e.partitions))
-		for _, pm := range e.partitions {
-			partitions = append(partitions, pm.Partition())
+		if scanAll {
+			partitions = make([]tqid.Partition, 0, len(e.partitions))
+			for _, pm := range e.partitions {
+				partitions = append(partitions, pm.Partition())
+			}
+		} else {
+			partitions = slices.DeleteFunc(due, func(p tqid.Partition) bool {
+				_, ok := e.partitions[p.Key()]
+				return !ok
+			})
 		}
 		e.partitionsLock.RUnlock()
 
-		partitions = util.FilterSlice(partitions, ownedByOther)
+		// Note that we have to get the next change time before checking ownership, otherwise
+		// we could miss a change in between.
+		for _, p := range partitions {
+			if next := rc.NextRouteChange(p); !next.IsZero() {
+				checks.Add(routeCheck{at: next, partition: p})
+			}
+		}
+		if checks.IsEmpty() {
+			checkTimer.Stop()
+		} else {
+			checkTimer.Reset(time.Until(checks.Peek().at) + gradualMembershipChangeBatchDelay)
+		}
+
+		// Note that batches of this slice are retained by the unload timers below, so we can't
+		// reuse it for the next iteration.
+		partitions = slices.DeleteFunc(partitions, func(p tqid.Partition) bool { return !needsUnload(p) })
 
 		const batchSize = 100
 		for i := 0; i < len(partitions); i += batchSize {
@@ -471,6 +567,13 @@ func (e *matchingEngineImpl) watchMembership() {
 			batch := partitions[i:min(len(partitions), i+batchSize)]
 			wait := backoff.Jitter(delay, 0.1)
 			time.AfterFunc(wait, func() {
+				defer func() {
+					pendingLock.Lock()
+					defer pendingLock.Unlock()
+					for _, p := range batch {
+						delete(pending, p.Key())
+					}
+				}()
 				// maybe the whole engine stopped
 				if atomic.LoadInt32(&e.status) != common.DaemonStatusStarted {
 					return
@@ -478,13 +581,33 @@ func (e *matchingEngineImpl) watchMembership() {
 				for _, p := range batch {
 					// maybe ownership changed again
 					if !ownedByOther(p) {
-						return
+						continue
 					}
 					// now we can unload
 					e.unloadTaskQueuePartitionByKey(p, nil, unloadCauseMembership)
 				}
 			})
 		}
+	}
+}
+
+// watchRouteChange arranges for watchMembership to check ownership of a newly loaded partition
+// if it may change during a gradual membership change.
+func (e *matchingEngineImpl) watchRouteChange(p tqid.Partition) {
+	rc, ok := e.matchingRawClient.(matching.RoutingClient)
+	if !ok || e.config.MembershipUnloadDelay() == 0 {
+		return
+	}
+	next := rc.NextRouteChange(p)
+	if next.IsZero() {
+		return
+	}
+	e.routeChecksLock.Lock()
+	e.routeChecksLoaded = append(e.routeChecksLoaded, routeCheck{at: next, partition: p})
+	e.routeChecksLock.Unlock()
+	select {
+	case e.routeChecksCh <- struct{}{}:
+	default:
 	}
 }
 
@@ -528,6 +651,7 @@ func (e *matchingEngineImpl) getTaskQueuePartitionManager(
 		// Runs after the deferred partitionsLock.Unlock below, so Start is outside the lock.
 		if retCreated {
 			retPM.Start()
+			e.watchRouteChange(partition)
 		}
 		if retErr = retPM.WaitUntilInitialized(ctx); retErr != nil {
 			e.unloadTaskQueuePartition(retPM, unloadCauseInitError)

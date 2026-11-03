@@ -153,9 +153,9 @@ func (s *RpoSuite) TestScheduledUpdates() {
 	s.NoError(err)
 
 	start = time.Now()
-	_, err = testService.rings[1].EvictSelfAt(start.Add(2 * time.Second))
+	_, err = testService.rings[1].EvictSelfAt(start.Add(2*time.Second), 0)
 	s.NoError(err)
-	_, err = testService.rings[0].EvictSelfAt(start.Add(4 * time.Second))
+	_, err = testService.rings[0].EvictSelfAt(start.Add(4*time.Second), 0)
 	s.NoError(err)
 
 	waitAndCheckMembers([]string{testService.hostAddrs[0], testService.hostAddrs[2]})
@@ -194,7 +194,7 @@ func (s *RpoSuite) TestEvictBeforeStart() {
 
 	// Evicting again is still a no-op success.
 	s.NoError(testService.rings[2].EvictSelf())
-	waitTime, err := testService.rings[2].EvictSelfAt(time.Now().Add(5 * time.Second))
+	waitTime, err := testService.rings[2].EvictSelfAt(time.Now().Add(5*time.Second), 0)
 	s.NoError(err)
 	s.Zero(waitTime)
 }
