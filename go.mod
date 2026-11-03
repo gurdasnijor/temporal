@@ -50,7 +50,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sony/gobreaker v1.0.0
 	github.com/stretchr/testify v1.11.1
-	github.com/temporalio/ringpop-go v0.1.1
+	github.com/temporalio/ringpop-go v0.1.3
 	github.com/temporalio/sqlparser v0.1.0
 	github.com/temporalio/tchannel-go v1.22.1
 	github.com/tidwall/btree v1.8.1
@@ -230,6 +230,3 @@ tool golang.org/x/perf/cmd/benchstat
 
 // Use the local testx; consumers of the server ignore this replace.
 replace go.temporal.io/testx => ./common/testx
-
-// TODO: drop once temporalio/ringpop-go#24 is merged and tagged.
-replace github.com/temporalio/ringpop-go => github.com/dnr/ringpop-go v0.0.0-20261027045906-de5d836e8603
