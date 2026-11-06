@@ -1,0 +1,26 @@
+{
+  "name": "oss-triage",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test 'src/**/*.test.ts'",
+    "eval": "node src/cli/eval.ts",
+    "route": "node src/cli/route.ts",
+    "serve": "node src/cli/serve.ts"
+  },
+  "dependencies": {
+    "@linear/sdk": "^101.1.0",
+    "@octokit/graphql": "^9.0.5",
+    "@turbopuffer/turbopuffer": "^2.14.0",
+    "picomatch": "^4.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/picomatch": "^4.0.3",
+    "typescript": "^7.0.2"
+  }
+}

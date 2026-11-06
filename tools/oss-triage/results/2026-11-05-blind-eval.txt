@@ -1,0 +1,181 @@
+closed 1148, usable 163, index vault-code-temporal, ownership at origin/main
+
+## All usable: 163 issues (oss-matching 45, oss-foundations 82, act 6, nexus 16, cgs 14)
+always guessing the largest team: 50%
+search    ownership   all right        high band        routed at 95% target (held out)
+voyage    codeowners  67/163 41%       34/63 54%        routes 4%, 5/6 83% (44%–97%)
+voyage    history     97/163 60%       40/49 82%        routes 11%, 16/18 89% (67%–97%)
+voyage    both        93/163 57%       41/57 72%        routes 0%, 0/0 (0%–100%)
+keyword   codeowners  64/163 39%       32/49 65%        routes 0%, 0/0 (0%–100%)
+keyword   history     89/163 55%       32/36 89%        routes 19%, 26/31 84% (67%–93%)
+keyword   both        89/163 55%       33/37 89%        routes 2%, 2/4 50% (15%–85%)
+hybrid    codeowners  64/163 39%       33/58 57%        routes 0%, 0/0 (0%–100%)
+hybrid    history     94/163 58%       35/45 78%        routes 13%, 19/21 90% (71%–97%)
+hybrid    both        97/163 60%       40/51 78%        routes 0%, 0/0 (0%–100%)
+
+## Firm link only: 83 issues (oss-matching 31, oss-foundations 30, act 4, nexus 10, cgs 8)
+always guessing the largest team: 37%
+search    ownership   all right        high band        routed at 95% target (held out)
+voyage    codeowners  40/83 48%        18/28 64%        routes 4%, 2/3 67% (21%–94%)
+voyage    history     46/83 55%        20/24 83%        routes 20%, 16/17 94% (73%–99%)
+voyage    both        51/83 61%        22/27 81%        routes 7%, 6/6 100% (61%–100%)
+keyword   codeowners  32/83 39%        17/23 74%        routes 0%, 0/0 (0%–100%)
+keyword   history     43/83 52%        17/18 94%        routes 18%, 14/15 93% (70%–99%)
+keyword   both        44/83 53%        19/20 95%        routes 5%, 3/4 75% (30%–95%)
+hybrid    codeowners  37/83 45%        18/26 69%        routes 0%, 0/0 (0%–100%)
+hybrid    history     44/83 53%        18/21 86%        routes 17%, 11/14 79% (52%–92%)
+hybrid    both        50/83 60%        20/24 83%        routes 7%, 6/6 100% (61%–100%)
+
+## PR author only (no approver fallback): 106 issues (oss-matching 31, oss-foundations 49, act 3, nexus 15, cgs 8)
+always guessing the largest team: 46%
+search    ownership   all right        high band        routed at 95% target (held out)
+voyage    codeowners  41/106 39%       22/42 52%        routes 0%, 0/0 (0%–100%)
+voyage    history     59/106 56%       22/26 85%        routes 7%, 5/7 71% (36%–92%)
+voyage    both        56/106 53%       22/31 71%        routes 6%, 3/6 50% (19%–81%)
+keyword   codeowners  42/106 40%       22/33 67%        routes 0%, 0/0 (0%–100%)
+keyword   history     58/106 55%       21/23 91%        routes 5%, 4/5 80% (38%–96%)
+keyword   both        57/106 54%       20/23 87%        routes 2%, 0/2 0% (0%–66%)
+hybrid    codeowners  42/106 40%       22/39 56%        routes 0%, 0/0 (0%–100%)
+hybrid    history     62/106 58%       21/26 81%        routes 8%, 5/8 63% (31%–86%)
+hybrid    both        62/106 58%       24/30 80%        routes 3%, 2/3 67% (21%–94%)
+
+## Filed since 2025: 59 issues (oss-matching 9, oss-foundations 33, act 5, nexus 7, cgs 5)
+always guessing the largest team: 56%
+search    ownership   all right        high band        routed at 95% target (held out)
+voyage    codeowners  32/59 54%        14/18 78%        routes 0%, 0/0 (0%–100%)
+voyage    history     40/59 68%        19/24 79%        routes 10%, 4/6 67% (30%–90%)
+voyage    both        40/59 68%        20/24 83%        routes 0%, 0/0 (0%–100%)
+keyword   codeowners  27/59 46%        13/16 81%        routes 3%, 1/2 50% (9%–91%)
+keyword   history     38/59 64%        18/21 86%        routes 5%, 2/3 67% (21%–94%)
+keyword   both        37/59 63%        19/21 90%        routes 7%, 2/4 50% (15%–85%)
+hybrid    codeowners  26/59 44%        13/17 76%        routes 0%, 0/0 (0%–100%)
+hybrid    history     37/59 63%        18/23 78%        routes 27%, 14/16 88% (64%–97%)
+hybrid    both        39/59 66%        20/23 87%        routes 0%, 0/0 (0%–100%)
+
+## Feature requests: 43 issues (oss-matching 14, oss-foundations 23, act 1, nexus 1, cgs 4)
+always guessing the largest team: 53%
+search    ownership   all right        high band        routed at 95% target (held out)
+voyage    codeowners  16/43 37%        6/16 38%         routes 0%, 0/0 (0%–100%)
+voyage    history     22/43 51%        10/14 71%        routes 0%, 0/0 (0%–100%)
+voyage    both        22/43 51%        7/11 64%         routes 0%, 0/0 (0%–100%)
+keyword   codeowners  14/43 33%        4/8 50%          routes 0%, 0/0 (0%–100%)
+keyword   history     16/43 37%        6/8 75%          routes 0%, 0/0 (0%–100%)
+keyword   both        20/43 47%        4/5 80%          routes 0%, 0/0 (0%–100%)
+hybrid    codeowners  16/43 37%        5/14 36%         routes 0%, 0/0 (0%–100%)
+hybrid    history     19/43 44%        7/13 54%         routes 0%, 0/0 (0%–100%)
+hybrid    both        22/43 51%        6/10 60%         routes 0%, 0/0 (0%–100%)
+
+## Bugs: 83 issues (oss-matching 21, oss-foundations 47, act 2, nexus 5, cgs 8)
+always guessing the largest team: 57%
+search    ownership   all right        high band        routed at 95% target (held out)
+voyage    codeowners  36/83 43%        18/30 60%        routes 0%, 0/0 (0%–100%)
+voyage    history     58/83 70%        19/21 90%        routes 25%, 20/21 95% (77%–99%)
+voyage    both        53/83 64%        21/29 72%        routes 0%, 0/0 (0%–100%)
+keyword   codeowners  35/83 42%        19/28 68%        routes 0%, 0/0 (0%–100%)
+keyword   history     55/83 66%        18/18 100%       routes 42%, 33/35 94% (81%–98%)
+keyword   both        50/83 60%        18/19 95%        routes 10%, 5/8 63% (31%–86%)
+hybrid    codeowners  35/83 42%        20/31 65%        routes 0%, 0/0 (0%–100%)
+hybrid    history     58/83 70%        19/20 95%        routes 31%, 24/26 92% (76%–98%)
+hybrid    both        55/83 66%        23/28 82%        routes 5%, 4/4 100% (51%–100%)
+
+## Per team, hybrid + both
+oss-matching     found 27/45 60%     when named, right 27/46 59%
+oss-foundations  found 60/82 73%     when named, right 60/78 77%
+act              found 3/6 50%       when named, right 3/18 17%
+nexus            found 3/16 19%      when named, right 3/6 50%
+cgs              found 4/14 29%      when named, right 4/15 27%
+
+## Per team, voyage + both
+oss-matching     found 25/45 56%     when named, right 25/48 52%
+oss-foundations  found 58/82 71%     when named, right 58/76 76%
+act              found 3/6 50%       when named, right 3/21 14%
+nexus            found 2/16 13%      when named, right 2/3 67%
+cgs              found 5/14 36%      when named, right 5/15 33%
+
+## Per team, keyword + both
+oss-matching     found 20/45 44%     when named, right 20/43 47%
+oss-foundations  found 61/82 74%     when named, right 61/89 69%
+act              found 2/6 33%       when named, right 2/11 18%
+nexus            found 3/16 19%      when named, right 3/6 50%
+cgs              found 3/14 21%      when named, right 3/14 21%
+
+## Paired, all usable
+voyage+both vs keyword+both: only first right 21, only second 17, p=0.627
+voyage+history vs keyword+history: only first right 16, only second 8, p=0.152
+hybrid+both vs keyword+both: only first right 16, only second 8, p=0.152
+voyage+history vs voyage+both: only first right 19, only second 15, p=0.608
+
+## Ceiling, all usable: 163 issues, ownership step on the fix PR's own non-test files (not blind)
+codeowners  62/163 38%       high band 31/44 70%
+history     89/163 55%       high band 44/57 77%
+both        97/163 60%       high band 41/51 80%
+
+## Ceiling, filed since 2025: 59 issues, ownership step on the fix PR's own non-test files (not blind)
+codeowners  19/59 32%        high band 15/19 79%
+history     33/59 56%        high band 18/25 72%
+both        34/59 58%        high band 20/23 87%
+
+## Ceiling, firm link: 83 issues, ownership step on the fix PR's own non-test files (not blind)
+codeowners  35/83 42%        high band 18/25 72%
+history     43/83 52%        high band 25/33 76%
+both        49/83 59%        high band 23/28 82%
+
+## Search found a file the fix changed (top 20)
+voyage    126/163 77%
+keyword   111/163 68%
+hybrid    126/163 77%
+voyage vs keyword: only voyage 20, only keyword 5, p=0.004
+
+## Misses with the fix's own files, newest first
+21 oss-foundations named oss-matching
+11 oss-matching named oss-foundations
+6 nexus named oss-matching
+4 oss-foundations named cgs
+4 cgs named oss-foundations
+4 nexus named oss-foundations
+3 cgs named oss-matching
+3 oss-matching named act
+2 nexus named cgs
+2 oss-matching named cgs
+1 oss-foundations named act
+1 act named oss-foundations
+1 cgs named nexus
+1 act named nexus
+1 oss-foundations named nexus
+1 act named oss-matching
+#12780 2026-10-27 Every published server and admin-tools tag still trusts the eMudhra ro
+  fixed by oss-foundations (author, loose, PR 12829); named act; files common/headers/version_checker.go docker/docker-bake.hcl go.mod go.sum
+#12758 2026-10-27 temporal-cassandra-tool create-keyspace ignores global --datacenter an
+  fixed by oss-foundations (approver, firm, PR 12759); named oss-matching; files tools/cassandra/handler.go
+#12486 2026-10-09 Flakytest: TestQueryWorkflow_QueryBeforeStart
+  fixed by oss-foundations (author, loose, PR 12488); named oss-matching; files 
+#12243 2026-09-28 Security: bump go-openapi/swag to ≥ v0.27.1 (CVE-2026-93450)
+  fixed by oss-foundations (approver, firm, PR 12305); named oss-matching; files go.mod go.sum
+#12109 2026-09-16 Invalid system.secondaryVisibilityWritingMode value silently fails eve
+  fixed by oss-foundations (approver, firm, PR 12184); named oss-matching; files common/dynamicconfig/collection.go common/dynamicconfig/constants.go common/persistence/visibility/manager_selector.go
+#11991 2026-09-10 ExponentialRetryPolicy without maximum interval returns a ~292-year ba
+  fixed by act (approver, firm, PR 11992); named oss-foundations; files common/backoff/retrypolicy.go
+#11384 2026-07-31 Nexus reapply cannot distinguish "CHASM owns this operation" from "no 
+  fixed by nexus (author, loose, PR 11381); named cgs; files service/history/ndc/events_reapplier.go service/history/ndc/workflow_resetter.go
+#10690 2026-06-13 ResetWorkflowExecution returns "workflow not found" when targets an ol
+  fixed by oss-foundations (author, firm, PR 10926); named cgs; files service/history/api/resetworkflow/api.go service/history/ndc/workflow_resetter.go
+#10239 2026-05-13 PauseWorkflowExecution race: in-flight WT completes after PAUSED event
+  fixed by oss-foundations (approver, firm, PR 10292); named oss-matching; files service/history/api/respondworkflowtaskcompleted/api.go
+#10053 2026-04-24 OTel integration when running locally is broken
+  fixed by nexus (author, firm, PR 10055); named oss-matching; files develop/docker-compose/grafana/provisioning/tempo/tempo.yaml
+#10005 2026-04-21 Add JWT support for s2s communication/replication
+  fixed by cgs (author, firm, PR 10165); named oss-foundations; files common/authorization/interceptor.go common/config/config.go common/resource/fx.go common/rpc/auth/authtest/static.go
+#9881 2026-04-09 Support fallback/default TLS config for remote cluster connections
+  fixed by cgs (author, firm, PR 9932); named oss-matching; files common/rpc/encryption/fixedTLSConfigProvider.go common/rpc/encryption/local_store_tls_provider.go
+#9857 2026-04-08 Using elasticsearch as visibility store breaks existing elasticsearch 
+  fixed by oss-foundations (author, loose, PR 10152); named cgs; files tools/elasticsearch/handler.go tools/elasticsearch/main.go tools/elasticsearch/tasks.go
+#9804 2026-04-03 [Bug] postgres12_pgx plugin fails with "invalid input syntax for type 
+  fixed by oss-foundations (author, loose, PR 10198); named oss-matching; files common/persistence/persistencetest/queues.go common/persistence/tests/postgresql_test_util.go
+#9633 2026-03-24 Missing `defer` in `StreamWorkflowReplicationMessages()`
+  fixed by cgs (approver, firm, PR 9892); named nexus; files service/history/handler.go
+#8719 2025-11-28 Stale internode gRPC connections after pod termination when using Kube
+  fixed by oss-foundations (author, loose, PR 10250); named oss-matching; files chasm/lib/activity/gen/activitypb/v1/service_client.pb.go chasm/lib/nexusoperation/gen/nexusoperationpb/v1/service_client.pb.go chasm/lib/scheduler/gen/schedulerpb/v1/service_client.pb.go chasm/lib/tests/gen/testspb/v1/service_client.pb.go
+#8465 2025-10-09 temporal dependencies github.com/aws/aws-sdk-go v1.55.6 has vulnerabil
+  fixed by oss-foundations (approver, firm, PR 7884); named oss-matching; files go.mod go.sum
+#8436 2025-10-06 Temporal does not support setting postgresql sslmode=verify-ca
+  fixed by oss-foundations (approver, firm, PR 8481); named oss-matching; files common/persistence/sql/sqlplugin/postgresql/session/session.go
