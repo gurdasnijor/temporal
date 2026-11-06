@@ -31,24 +31,24 @@ Correct of 140 test issues, mean of 7 seeds, from `results/2026-11-05-label-sour
 | Labels | All | Assignee | Elsewhere |
 |---|---:|---:|---:|
 | PRs by author's team | 75.3 | 38.6 | 36.7 |
-| Tickets | 90.4 | 51.4 | 39.0 |
+| Tickets | 90.4 | 50.6 | 39.9 |
 | Tickets + open issues | 96.9 | 54.1 | 42.7 |
-| PRs + tickets + open issues | 93.6 | 52.0 | 41.6 |
+| PRs + tickets + open issues | 92.1 | 51.4 | 40.7 |
 
 This compares labels, not models. Stock OpenJev scores 114 on the same issues, and 95% is 133.
 
 ## Assumptions
 
 - Most of the ticket gain is on assignee answers, and a ticket's team and an assignee's team measure much the same thing.
-  On the other 65 answers tickets gain only about 2 issues over PRs, and tickets plus open issues about 6.
+  On the other 65 answers tickets gain only about 3 issues over PRs, and tickets plus open issues about 6.
 - The answer key has known errors and stays frozen for now, so every score inherits them.
 - The mix was chosen on these 140 issues, so a final check needs issues filed after the freeze.
 - Area suggestions use evidence from after some test dates, a small leak in the open issue rows.
-- ACT is about 37% of training rows and 18% of test issues; Foundations is 54% of test issues.
+- ACT is about 28% of training rows and 18% of test issues; Foundations is 23% of training rows and 54% of test issues.
 - `teams.json` and the Area table disagree in places, such as mutable state, and TOD sees both.
 - `build_dataset` drops identical rows, so repeating open issues to weight them would do nothing.
 
 ## Pass bar
 
-Run 2026Q2 alone first: about 1,800 rows before April 2026, tested on 63 issues. It passes if it clearly
+Run 2026Q2 alone first: about 1,600 rows before April 2026, tested on 63 issues. It passes if it clearly
 beats stock OpenJev on those same issues, on assignee answers and on the rest. Other quarters run only then.

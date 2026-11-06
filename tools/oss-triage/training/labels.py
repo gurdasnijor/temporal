@@ -88,7 +88,8 @@ def tickets(test):
         links_a_test_issue = {int(n) for n in ISSUE_LINK.findall(text)} & test_numbers
         if team and len(ticket["body"] or "") >= MIN_DESCRIPTION and not links_a_test_issue:
             rows.append({"id": ticket["id"], "at": ticket["at"], "team": team, "text": text, "source": "ticket"})
-    return without_copies_of(test, rows)
+    # Some ACT tickets moved from Jira to Linear with the same key and appear in both.
+    return without_copies_of(test, list({row["id"]: row for row in rows}.values()))
 
 
 def without_copies_of(test, rows):
