@@ -1,0 +1,7 @@
+{
+ "oss-matching": "OSS Matching team. Owns the Matching Service: dispatching workflow and activity tasks from task queues to workers, pollers, task queue partitions and task forwarding, worker versioning, Worker Deployments and build IDs, task queue priority and fairness, dispatch rate limits, worker heartbeats and autoscaling.",
+ "oss-foundations": "OSS Foundations team. Owns core platform stability, scalability and resilience: multi-tenant reliability, noisy-neighbor protection, debuggability, dynamic configuration, the persistence layer and SQL or Cassandra stores, history shards and task queues, visibility and search attributes, archival, the namespace delete and DLQ workers, payload storage and server dependencies.",
+ "act": "Application Components Team (ACT). Owns server-side workflow and application features: signals, updates, queries, workflow and activity reset and pause, operator commands, schedules, batch operations, standalone activities, CHASM libraries, workflow mutable state and history events, the CLI, Docker images and the OSS release process.",
+ "nexus": "Nexus team. Owns Nexus cross-namespace and cross-team RPC: Nexus endpoints, Nexus operations and standalone Nexus operations, callbacks, the Nexus API and SDK support in the server.",
+ "cgs": "Cloud Global Services (CGS). Owns cross-region and multi-cluster replication, NDC conflict resolution, failover, high availability and disaster recovery, namespace migration and replication, multi-cell namespaces, and server-to-server authentication and TLS between clusters."
+}

@@ -27,6 +27,10 @@ Not run against Linear yet. Tests cover it with Linear's real webhook client and
 fake session. Installing it needs a workspace admin, an OAuth app with `actor=app` and the scopes
 `app:assignable` and `app:mentionable`, then `LINEAR_ACCESS_TOKEN` and `LINEAR_WEBHOOK_SECRET`.
 
+## Training Jev
+
+`training/` holds the labels and fine-tuning proposed for Jev. See `training/README.md`. Nothing there has run on a GPU.
+
 ## Blind eval
 
 Each closed issue with a merged fix PR gets the team of the PR's author, or the one team that

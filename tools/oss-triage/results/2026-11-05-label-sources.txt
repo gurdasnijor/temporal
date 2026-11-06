@@ -1,0 +1,7 @@
+140 issues: 75 answers from the assignee, 65 from elsewhere; mean of 7 seeds
+PRs, by author's team           75.3 (73-78)  assignee 38.6  elsewhere 36.7
+tickets                         90.4 (90-91)  assignee 51.4  elsewhere 39.0
+tickets + open issues           96.9 (95-98)  assignee 54.1  elsewhere 42.7
+tickets + open issues x3        98.4 (97-100)  assignee 56.4  elsewhere 42.0
+PRs + tickets                   90.0 (89-91)  assignee 49.3  elsewhere 40.7
+PRs + tickets + open issues     93.6 (93-94)  assignee 52.0  elsewhere 41.6
