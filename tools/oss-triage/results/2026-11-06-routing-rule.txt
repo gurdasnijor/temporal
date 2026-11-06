@@ -1,0 +1,11 @@
+140 issues, 4 answers corrected from team boards
+
+Model        All    Q1    Q2    Q3    Q4
+stock        114    11    49    32    22
+embed        112     9    51    31    21
+both         112    10    51    31    20
+
+Name a team at p >= 0.8
+January to June: named 41 of 74, right 39; sent to a person 33, right team in the top two 30
+July onward: named 34 of 66, right 32; sent to a person 32, right team in the top two 31
+All: named 75 of 140, right 71; sent to a person 65, right team in the top two 61
