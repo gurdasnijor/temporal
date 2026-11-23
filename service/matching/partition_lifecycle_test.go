@@ -99,10 +99,11 @@ func TestEngineStop_WaitsForUnloadInProgress(t *testing.T) {
 			engineStopped.Store(true)
 		}()
 		synctest.Wait()
-		require.False(t, engineStopped.Load())
+		stoppedBeforeRelease := engineStopped.Load()
 
 		close(release)
 		synctest.Wait()
+		require.False(t, stoppedBeforeRelease)
 		require.True(t, engineStopped.Load())
 	})
 }
