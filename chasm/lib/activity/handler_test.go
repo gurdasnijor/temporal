@@ -2,7 +2,6 @@ package activity
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -62,8 +61,18 @@ func TestGrantEagerActivityDispatch(t *testing.T) {
 			}},
 		},
 		{
-			name: "matching error",
-			err:  errors.New("matching unavailable"),
+			name: "matching unavailable",
+			err:  serviceerror.NewUnavailable("matching unavailable"),
+		},
+		{
+			name:    "grant timed out",
+			err:     context.DeadlineExceeded,
+			granted: true,
+		},
+		{
+			name:    "grant canceled",
+			err:     serviceerror.NewCanceled("grant canceled"),
+			granted: true,
 		},
 		{
 			name:     "missing response item",

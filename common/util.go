@@ -723,7 +723,10 @@ func GrantEagerDispatch(
 			Version:  version,
 		}},
 	})
-	return err == nil && len(response.GetItems()) == 1 && response.GetItems()[0].GetGrantedCount() == 1
+	if err != nil {
+		return IsContextDeadlineExceededErr(err) || IsContextCanceledErr(err)
+	}
+	return len(response.GetItems()) == 1 && response.GetItems()[0].GetGrantedCount() == 1
 }
 
 func CloneProtoMap[K comparable, T proto.Message](src map[K]T) map[K]T {

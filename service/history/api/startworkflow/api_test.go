@@ -2,7 +2,6 @@ package startworkflow
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -172,10 +171,20 @@ func TestPrepareEagerDispatchCheck(t *testing.T) {
 			wantDeniedReason: eagerStartDeniedReasonDispatchNotGranted,
 		},
 		{
-			name:             "matching error",
+			name:             "matching unavailable",
 			checkEnabled:     true,
-			matchingErr:      errors.New("matching unavailable"),
+			matchingErr:      serviceerror.NewUnavailable("matching unavailable"),
 			wantDeniedReason: eagerStartDeniedReasonDispatchNotGranted,
+		},
+		{
+			name:         "grant timed out",
+			checkEnabled: true,
+			matchingErr:  serviceerror.NewDeadlineExceeded("grant timed out"),
+		},
+		{
+			name:         "grant canceled",
+			checkEnabled: true,
+			matchingErr:  context.Canceled,
 		},
 		{
 			// Matching isn't asked when eager start is already denied, so no grant is spent.
